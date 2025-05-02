@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}All Notes{% endblock %}
+
+{% block content %}
+<h2>All Notes</h2>
+
+<form method="get" class="row g-2 mb-3">
+  <div class="col-auto">
+    <input type="text" name="q" value="{{ q }}" placeholder="Search..." class="form-control">
+  </div>
+  <div class="col-auto">
+    <button type="submit" class="btn btn-outline-primary">Search</button>
+  </div>
+</form>
+
+<a href="{% url 'note_create' %}" class="btn btn-success mb-3">+ Create New Note</a>
+
+{% if page_obj %}
+  <div class="list-group">
+    {% for note in page_obj %}
+      <div class="list-group-item mb-2">
+        <h5>{{ note.title }}</h5>
+        <p>{{ note.content|truncatechars:100 }}</p>
+        <a href="{% url 'note_update' note.pk %}" class="btn btn-sm btn-primary">Edit</a>
+        <a href="{% url 'note_delete' note.pk %}" class="btn btn-sm btn-danger">Delete</a>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination controls -->
+  <nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination">
+      {% if page_obj.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?q={{ q }}&page={{ page_obj.previous_page_number }}">Previous</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">Previous</span></li>
+      {% endif %}
+
+      <li class="page-item disabled">
+        <span class="page-link">
+          Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+      </li>
+
+      {% if page_obj.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?q={{ q }}&page={{ page_obj.next_page_number }}">Next</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">Next</span></li>
+      {% endif %}
+    </ul>
+  </nav>
+{% else %}
+  <p>No notes available.</p>
+{% endif %}
+
+{% endblock %}
